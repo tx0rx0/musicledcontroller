@@ -13,27 +13,11 @@ Inspiration from J. Skoba MSQEQ7 test
 #define strobePin 2 // strobe is attached to digital pin 2
 #define resetPin  12 // reset is attached to digital pin 3
 
-//Button/Pot Pins
+//Button Pins
 #define button1 A2
-#define button2 A3
-#define volumepot A1
-
+int button1val = 0;
 int spectrumValue[7]; // to hold a2d values
 int index; //Index of the greatest Frequency Band
-
-
-//Test Button Values
-int button1state = 1;
-int button2state = 1;
-
-//button readings
-int button1val;
-int button2val;
-
-//Previous button readings
-int lastbutton1state = HIGH;
-int lastbutton2state = HIGH;
-
 
 //Volume Constant
 int volume;
@@ -53,69 +37,31 @@ int m = 0;
 int n = 0;
 int o = 0;
 
-//Button Debounce Variables
-long lastdebouncetime1 = 0;
-long lastdebouncetime2 = 0;
-long debouncedelay = 50; 
 
-//Individual LED Color Arrays
-int redledpins[5] = { 1, 5, 9, 13, 10 };
-int greenledpins[5] = { 3, 7, 11, 2, 14};
-int blueledpins[5] = { 4, 8, 12, 6, 15};
+//LED pins by color and LED number. 1st LED is right next to the voltage regulator
 
-//Individual LED Arrays
-int led1pins[3] = {1, 3, 4};
-int led2pins[3] = {5, 7, 8};
-int led3pins[3] = {9, 11, 12};
-int led4pins[3] = {13, 2, 6};
-int led5pins[3] = {10, 14, 15};
+//TLC pin
 
-
-
-//1r 1
-//1g 3
-//1b 4
-//2r 5
-//2g 7
-//2b 8 
-//3r 9
-//3g 11 
-//3b 12
-//4r 13
-//4g 2
-//4b 6
-//5r 10
-//5g 14
-//5b 15
+//Channel 0 UNCONNECTED
+//Channel 1 5 BLUE
+//Channel 2 5 GREEN
+//Channel 3 5 RED
+//Channel 4 4 BLU
+//Channel 5 4 GREEN
+//Channel 6 4 RED
+//Channel 7 3 BLUE
+//Channel 8 3 GREEN
+//Channel 9 3 RED
+//Channel 10 2 BLUE
+//Channel 11 2 GREEN
+//Channel 12 2 RED
+//Channel 13 1 BLUE
+//Channel 14 1 GREEN
+//Channel 15 1 RED
 
 int a;
 int b;
 
-//Returns common values in lednpins and colorledpins arrays
-/*
-int  common_elements1(int a[], int b[]){
-  
-a.sort();
-b.sort();
-n, o = 0, 0;
-common = [];
-while n < len(a) and 0 < len(b):
-
-if (a[n] == b[o])
-{
-  common.append(a[i]);
-  n += 1;
-  n += 1;
-}
-if (a[n] < b[o])
-{
-  n += 1;
-else
-{
-  o += 1;
-}
-}
-*/
 
 void setup()
 {
@@ -141,22 +87,14 @@ Tlc.update();
  
  //Button and Pot Settings
  pinMode(button1, INPUT);
- pinMode(button2, INPUT);
- //pinMode(volumepot, INPUT);
  
  digitalWrite(resetPin, LOW);
  digitalWrite(strobePin, HIGH);
  
  //Sets Button pins high
- digitalWrite(button1, HIGH);
- digitalWrite(button2, HIGH);
+ digitalWrite(button1, HIGH);;
 
- Serial.println("MSGEQ7 test by J Skoba");
 }
-
-
-
-  
 
 void loop()
 {
@@ -168,59 +106,11 @@ Tlc.update();
  
  
  button1val = digitalRead(button1);
- button2val = digitalRead(button2);
- 
-int volume = analogRead(volumepot);
-
-//Button Value Sets
- if (button1val != lastbutton1state )
- {
-   lastdebouncetime1 = millis();
- }
- if (button2val != lastbutton2state)
- {
-   lastdebouncetime2 = millis();
- }
- 
- if((millis() - lastdebouncetime1) > debouncedelay)
- {
-   button1state = button1val;
- }
- if((millis() - lastdebouncetime2) > debouncedelay)
- {
-   button2state = button2val;
- }
- 
- 
- 
- //saves button states
- lastbutton1state = button1val;
- lastbutton2state = button2val;
- 
- //Counter Iterations
- if (button1state == 0)
- {
-   j=j+1;
- }
- if (button2state == 0 )
- {
-   k = k+1;
- }
- 
- //Goes Back to 0
- if (j > 1)
- {
-   j = 0;
- }
- 
-
-
-
  
  //Light Level Trigger Setup
  if (volume > 0)
 {
- lightlevel = 150;
+ lightlevel = 400;
 }
 if (volume > 204)
 {
@@ -239,7 +129,7 @@ if (volume > 816)
   lightlevel = 1000;
 }
 
-
+lightlevel = 400;
  for (int i = 0; i < 7; i++)
  {
  digitalWrite(strobePin, LOW);
@@ -258,119 +148,66 @@ if (volume > 816)
  }
  
  
-if  (j == 1)
-{
-//Button Values  
-button1val = digitalRead(button1);
-button2val = digitalRead(button2);
-   if (button2val == 0)
- {
-  k += 1; 
- }
-  if (k == 0)
-  {
-      Tlc.set(1, 4095);
-      Tlc.set(2, 4095);
-      Tlc.set(3, 4095);
-      Tlc.set(4, 4095);
-      Tlc.set(5, 4095);
-      Tlc.set(6, 4095);
-      Tlc.set(7, 4095);
-      Tlc.set(8, 4095);
-      Tlc.set(9, 4095);
-      Tlc.set(10, 4095);
-      Tlc.set(11, 4095);
-      Tlc.set(12, 4095);
-      Tlc.set(13, 4095);
-      Tlc.set(14, 4095);
-      Tlc.set(15, 4095);   
-  }
-  if (k == 1)
-  {
-    Tlc.set(1, 0);
-      Tlc.set(2, 0);
-      Tlc.set(3, 0);
-      Tlc.set(4, 4095);
-      Tlc.set(5, 0);
-      Tlc.set(6, 4095);
-      Tlc.set(7, 0);
-      Tlc.set(8, 4095);
-      Tlc.set(9, 0);
-      Tlc.set(10, 0);
-      Tlc.set(11, 0);
-      Tlc.set(12, 4095);
-      Tlc.set(13, 0);
-      Tlc.set(14, 0);
-      Tlc.set(15, 4095);
-  }
-   
-   
-      Tlc.update();
-        //Resets State Checks
-        
- 
-      
-}
 
 if (j == 0)
 {
    //BASS ACTIVATED MODE
    if (spectrumValue[0] > lightlevel)
    {
-      Tlc.set(3, 4095);
+      Tlc.set(1, 4095);
+      Tlc.set(4, 4095);
       Tlc.set(7, 4095);
-      Tlc.set(11, 4095);
-      Tlc.set(14, 4095);
-      Tlc.set(2, 4095);
+      Tlc.set(10, 4095);
+      Tlc.set(13, 4095);
   
   
    }
    if (spectrumValue[1] > lightlevel)
    {
-      Tlc.set(3, 2047);
+      Tlc.set(1, 2047);
+      Tlc.set(4, 2047);
       Tlc.set(7, 2047);
-      Tlc.set(11, 2047);
-      Tlc.set(14, 2047);
-      Tlc.set(2, 2047);
+      Tlc.set(10, 2047);
+      Tlc.set(13, 2047);
   
   
    }
    // MIDDLE RESPONSE MODE
    if (spectrumValue[2] > lightlevel)
    {
-     Tlc.set(4, 4095);
+     Tlc.set(2, 4095);
+     Tlc.set(5, 4095);
      Tlc.set(8, 4095);
-     Tlc.set(12, 4095);
-     Tlc.set(15, 4095);
-     Tlc.set(6, 4095);
+     Tlc.set(11, 4095);
+     Tlc.set(14, 4095);
    }
  
    if (spectrumValue[3] > lightlevel)
    {
-     Tlc.set(4, 2047);
+     Tlc.set(2, 2047);
+     Tlc.set(5, 2047);
      Tlc.set(8, 2047);
-     Tlc.set(12, 2047);
-     Tlc.set(15, 2047);
-     Tlc.set(6, 2047);
+     Tlc.set(11, 2047);
+     Tlc.set(14, 2047);
    }
     // HIGH RESPONSE MODE
    if (spectrumValue[4] > lightlevel)
    {
-     Tlc.set(1, 4095);
-     Tlc.set(5, 4095);
+     Tlc.set(3, 4095);
+     Tlc.set(6, 4095);
      Tlc.set(9, 4095);
-     Tlc.set(13, 4095);
-     Tlc.set(10, 4095);
+     Tlc.set(12, 4095);
+     Tlc.set(15, 4095);
    }
 
  
   if (spectrumValue[5] > lightlevel)
  {
-   Tlc.set(1, 2047);
-   Tlc.set(5, 2047);
+   Tlc.set(3, 2047);
+   Tlc.set(6, 2047);
    Tlc.set(9, 2047);
-   Tlc.set(13, 2047);
-   Tlc.set(10, 2047);
+   Tlc.set(12, 2047);
+   Tlc.set(15, 2047);
  }
 
 }
@@ -411,7 +248,6 @@ if (j > 1)
 }
  
  //Pushes Changes to the TLC
- //Tlc.set(6, 4095);
  Tlc.update();
 
 
